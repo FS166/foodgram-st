@@ -1,9 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
+from .models import User, Subscription
 
-User = get_user_model()
-admin.site.unregister(User)
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email')
-    search_fields = ('username', 'email')
+admin.site.register(User)
+admin.site.register(Subscription)
