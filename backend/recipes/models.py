@@ -2,13 +2,22 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import FileExtensionValidator, MinValueValidator
 
+from .constants import (
+    MAX_RECIPE_NAME_LEN,
+    MAX_INGREDIENT_NAME_LEN,
+    MAX_MEASUREMENT_UNIT_LEN,
+    MIN_INGREDIENT_FROM_RECIPES,
+    MAX_SHORT_CODE_LEN,
+)
+
 User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=128, unique=True,
+    name = models.CharField(max_length=MAX_INGREDIENT_NAME_LEN,
+                            unique=True,
                             verbose_name='Название')
-    measurement_unit = models.CharField(max_length=64)
+    measurement_unit = models.CharField(max_length=MAX_MEASUREMENT_UNIT_LEN)
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -23,7 +32,9 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                verbose_name='Автор',
                                related_name='recipes')
-    name = models.CharField(max_length=256, verbose_name='Название')
+    name = models.CharField(max_length=MAX_RECIPE_NAME_LEN,
+                            verbose_name='Название')
+
     image = models.ImageField(
         upload_to='recipes/images/',
         validators=(
@@ -67,7 +78,8 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='Количество',
         validators=[
-            MinValueValidator(1, 'Количество должно быть больше 0')
+            MinValueValidator(MIN_INGREDIENT_FROM_RECIPES,
+                              'Количество должно быть больше 0')
         ]
     )
 
@@ -159,7 +171,7 @@ class ShortLink(models.Model):
         verbose_name='Рецепт'
     )
     short_code = models.CharField(
-        max_length=6,
+        max_length=MAX_SHORT_CODE_LEN,
         unique=True,
         verbose_name='Короткий код'
     )
