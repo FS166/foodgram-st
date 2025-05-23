@@ -5,6 +5,13 @@ from rest_framework.exceptions import ValidationError
 
 from core.validators import validate_username
 
+from recipes.constants import (
+    MAX_USER_EMAIL_LEN,
+    MAX_USER_USERNAME_LEN,
+    MAX_USER_FIRST_NAME_LEN,
+    MAX_USER_LAST_NAME_LEN
+)
+
 
 class User(AbstractUser):
     USERNAME_FIELD = 'email'
@@ -12,21 +19,21 @@ class User(AbstractUser):
 
     email = models.EmailField(
         unique=True,
-        max_length=254,
+        max_length=MAX_USER_EMAIL_LEN,
         verbose_name='Email',
     )
     username = models.CharField(
         unique=True,
-        max_length=150,
+        max_length=MAX_USER_USERNAME_LEN,
         validators=(validate_username,),
         verbose_name='Имя пользователя',
     )
     first_name = models.CharField(
-        max_length=150,
+        max_length=MAX_USER_FIRST_NAME_LEN,
         verbose_name='Имя',
     )
     last_name = models.CharField(
-        max_length=150,
+        max_length=MAX_USER_LAST_NAME_LEN,
         verbose_name='Фамилия',
     )
     avatar = models.ImageField(

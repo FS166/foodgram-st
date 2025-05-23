@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from recipes.models import Ingredient, Recipe, RecipeIngredient
-from core.fields import Base64ImageField
 from django.contrib.auth import get_user_model
+
+from core.fields import Base64ImageField
 from recipes.constants import MIN_COOKING_TIME, MIN_INGREDIENT_FROM_RECIPES
+from recipes.models import Ingredient, Recipe, RecipeIngredient
 
 User = get_user_model()
 
@@ -59,7 +60,6 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='ingredient.name')
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit')
-    amount = serializers.IntegerField()
 
     class Meta:
         model = RecipeIngredient
