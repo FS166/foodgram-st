@@ -59,13 +59,12 @@ class UserViewSet(DjoserUserViewSet):
         user = request.user
         author = self.get_object()
 
-        if user == author:
-            return Response(
-                {'errors': 'Вы не можете подписаться на самого себя.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
         if request.method == 'POST':
+            if user == author:
+                return Response(
+                    {'errors': 'Вы не можете подписаться на самого себя.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             try:
                 subscription = Subscription.objects.create(user=user,
                                                            author=author)
@@ -78,7 +77,7 @@ class UserViewSet(DjoserUserViewSet):
                                                 context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'DELETE':
+        else:
             subscription = Subscription.objects.filter(user=user,
                                                        author=author)
             if not subscription.exists():
@@ -93,7 +92,7 @@ class UserViewSet(DjoserUserViewSet):
             permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        subscriptions = Subscription.objects.filter(user=user)
+        subscriptions = User.objects.filter(subscribers__user=user)
         page = self.paginate_queryset(subscriptions)
         if page is not None:
             serializer = SubscriptionSerializer(page, many=True,
@@ -141,7 +140,7 @@ class UserViewSet(DjoserUserViewSet):
             return Response({'avatar': user.avatar.url},
                             status=status.HTTP_200_OK)
 
-        if request.method == 'DELETE':
+        else:
             user = request.user
             if not user.avatar:
                 return Response(
